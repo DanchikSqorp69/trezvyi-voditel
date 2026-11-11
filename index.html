@@ -1,0 +1,663 @@
+﻿<!doctype html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Трезвый водитель во Владивостоке — трезвый.рф</title>
+<meta name="description" content="Трезвый водитель за рулём вашей машины. Подача от 10 минут, понятные цены, калькулятор стоимости.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="leaflet.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0e0f11;--s1:#16181b;--s2:#1d2024;--line:rgba(255,255,255,.09);--ink:#f2efe8;--mute:#a7a59d;--gold:#c9a45c;--gold2:#e7cb8e}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;overflow-x:clip}
+body{font-family:Manrope,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.serif{font-family:"Playfair Display",Georgia,serif}
+.w{max-width:1160px;margin:0 auto;padding:0 24px}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+
+header{position:fixed;inset:0 0 auto 0;z-index:20;transition:background .3s,border-color .3s;border-bottom:1px solid transparent}
+header.s{background:rgba(14,15,17,.88);backdrop-filter:blur(10px);border-color:var(--line)}
+header .w{display:flex;align-items:center;justify-content:space-between;height:72px}
+.logo{font-family:"Playfair Display",serif;font-weight:700;font-size:24px;letter-spacing:.2px}
+.logo i{font-style:normal;color:var(--gold)}
+nav{display:flex;gap:34px;font-size:14px;color:var(--mute)}
+nav a:hover{color:var(--ink)}
+.tel{font-weight:600;font-size:15px;color:var(--gold2)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 30px;border-radius:2px;background:var(--gold);color:#17130a;font-weight:700;font-size:15px;letter-spacing:.3px;transition:background .2s}
+.btn:hover{background:var(--gold2)}
+.btn.o{background:none;color:var(--ink);border:1px solid rgba(255,255,255,.28)}
+.btn.o:hover{border-color:var(--gold);color:var(--gold2)}
+
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden}
+.hero-img{position:absolute;top:0;bottom:0;right:0;width:min(50vw,720px);background:url(hero.jpg) 50% 40%/cover no-repeat;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 45%);mask-image:linear-gradient(90deg,transparent 0,#000 45%)}
+.hero:before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,#0e0f11 0%,rgba(14,15,17,.92) 38%,rgba(14,15,17,.35) 75%,rgba(14,15,17,.2) 100%)}
+.hero:after{content:"";position:absolute;inset:auto 0 0 0;height:30%;z-index:1;background:linear-gradient(0deg,var(--bg),transparent)}
+.hero .w{width:100%;position:relative;z-index:2;padding-top:90px;padding-bottom:70px}
+.eyebrow{font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:22px;display:flex;align-items:center;gap:14px}
+.eyebrow:before{content:"";width:36px;height:1px;background:var(--gold)}
+h1{font-family:"Playfair Display",serif;font-weight:700;font-size:clamp(42px,7vw,84px);line-height:1.02;letter-spacing:-.5px}
+h1 em{font-style:italic;font-weight:500;color:var(--gold2)}
+.hero p.l{max-width:470px;margin:26px 0 36px;font-size:18px;color:#cfccc3}
+.cta{display:flex;gap:14px;flex-wrap:wrap}
+.facts{display:flex;gap:44px;margin-top:64px;flex-wrap:wrap}
+.facts div{font-size:13px;color:var(--mute);letter-spacing:.04em}
+.facts b{display:block;font-family:"Playfair Display",serif;font-size:32px;color:var(--ink);font-weight:500;margin-bottom:2px}
+
+section{padding:110px 0}
+.h2{font-family:"Playfair Display",serif;font-weight:500;font-size:clamp(30px,4.4vw,48px);line-height:1.12;letter-spacing:-.3px}
+.h2 em{font-style:italic;color:var(--gold2)}
+.lead{color:var(--mute);max-width:520px;margin-top:16px}
+
+.feat{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:60px;border-top:1px solid var(--line)}
+.feat div{padding:34px 28px 10px 0}
+.feat div+div{padding-left:28px;border-left:1px solid var(--line)}
+.feat svg{width:30px;height:30px;stroke:var(--gold);fill:none;stroke-width:1.2;margin-bottom:22px}
+.feat b{display:block;font-weight:600;margin-bottom:8px;font-size:17px}
+.feat span{color:var(--mute);font-size:15px}
+
+.split{display:grid;grid-template-columns:1fr 1fr;min-height:560px;background:var(--s1)}
+.split .ph{background:url(business.jpg) 12% 30%/cover;position:relative}
+.split .ph:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(14,15,17,.25),rgba(14,15,17,.1) 35%,rgba(14,15,17,.55) 65%,rgba(14,15,17,.9)),linear-gradient(0deg,rgba(14,15,17,.45),transparent 45%),linear-gradient(180deg,rgba(14,15,17,.35),transparent 30%)}
+.split .tx{padding:90px 72px;display:flex;flex-direction:column;justify-content:center}
+.split ul{list-style:none;margin-top:30px}
+.split li{padding:14px 0;border-top:1px solid var(--line);color:#cfccc3;display:flex;gap:16px}
+.split li:last-child{border-bottom:1px solid var(--line)}
+.split li i{font-style:normal;font-family:"Playfair Display",serif;color:var(--gold);font-size:18px;min-width:26px}
+
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:56px;margin-top:60px}
+.steps .n{font-family:"Playfair Display",serif;font-size:76px;line-height:1;color:transparent;-webkit-text-stroke:1px var(--gold);margin-bottom:14px}
+.steps b{display:block;font-size:19px;margin-bottom:8px;font-weight:600}
+.steps span{color:var(--mute)}
+
+.calcwrap{background:var(--s1);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.cx{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:36px;margin-top:50px;align-items:start}
+.cx>div,.pt .wrap,.two>div{min-width:0}
+.inp{text-overflow:ellipsis}
+.blk{background:var(--bg);border:1px solid var(--line);padding:28px 28px 30px;margin-bottom:18px}
+.blk h3{display:flex;align-items:center;gap:14px;font-family:"Playfair Display",serif;font-weight:500;font-size:23px;margin-bottom:22px}
+.blk h3 i{font-style:normal;font:700 13px Manrope,sans-serif;width:30px;height:30px;border:1px solid var(--gold);border-radius:50%;display:grid;place-items:center;color:var(--gold2);flex:none}
+.fl{display:block;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin:20px 0 9px}
+.inp{width:100%;height:52px;padding:0 16px;background:var(--s2);border:1px solid rgba(255,255,255,.14);border-radius:2px;color:var(--ink);font:500 16px Manrope,sans-serif;transition:border-color .2s}
+.inp::placeholder{color:#6f6d67}
+.inp:hover{border-color:rgba(201,164,92,.45)}.inp:focus{outline:none;border-color:var(--gold)}
+textarea.inp{height:84px;padding:14px 16px;resize:vertical}
+.pts{position:relative}
+.pt{position:relative;display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.pt .dot{flex:none;width:28px;height:28px;border-radius:50%;background:var(--gold);color:#17130a;font:800 12px Manrope,sans-serif;display:grid;place-items:center;position:relative;z-index:1}
+.pt.mid .dot{background:var(--s2);color:var(--gold2);border:1px solid var(--gold)}
+.pt .wrap{flex:1;position:relative}
+.pt .del{flex:none;width:36px;height:36px;border:1px solid rgba(255,255,255,.14);background:none;color:var(--mute);font-size:20px;line-height:1;cursor:pointer;border-radius:2px}
+.pt .del:hover{border-color:var(--gold);color:var(--gold2)}
+.pts:before{content:"";position:absolute;left:13.5px;top:26px;bottom:26px;border-left:1px dashed rgba(201,164,92,.55)}
+.ok-mark{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--gold2);font-size:15px;display:none}
+.wrap.ok .ok-mark{display:block}.wrap.ok .inp{padding-right:38px}
+.sug{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:40;background:#1d2024;border:1px solid rgba(201,164,92,.55);max-height:300px;overflow:auto;display:none;box-shadow:0 14px 40px rgba(0,0,0,.5)}
+.sug.on{display:block}
+.sug div{padding:11px 14px;cursor:pointer;font-size:15px;line-height:1.35}
+.sug div+div{border-top:1px solid var(--line)}
+.sug div small{display:block;color:var(--mute);font-size:12.5px;margin-top:2px}
+.sug div.act,.sug div:hover{background:rgba(201,164,92,.14)}
+.sug .em{color:var(--mute);cursor:default}
+.lnk{background:none;border:0;color:var(--gold2);font:600 14px Manrope,sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:8px;padding:6px 0}
+.lnk:hover{color:#fff}
+.lnk svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8}
+.row2{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:-2px 0 4px 40px}
+.sw{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:16px 0;border-top:1px solid var(--line);cursor:pointer}
+.sw:first-of-type{border-top:0;padding-top:4px}
+.sw b{display:block;font-weight:600;font-size:16px}
+.sw small{display:block;color:var(--mute);font-size:13.5px;margin-top:2px}
+.sw input{position:absolute;opacity:0;pointer-events:none}
+.sw .t{flex:none;width:50px;height:28px;border-radius:14px;background:#2a2d31;border:1px solid rgba(255,255,255,.16);position:relative;transition:background .2s,border-color .2s}
+.sw .t:after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#8d8a83;transition:transform .2s,background .2s}
+.sw input:checked+.t{background:rgba(201,164,92,.25);border-color:var(--gold)}
+.sw input:checked+.t:after{transform:translateX(22px);background:var(--gold2)}
+.sw input:focus-visible+.t{outline:2px solid var(--gold);outline-offset:3px}
+.seg{display:grid;grid-template-columns:1fr 1fr;border:1px solid rgba(255,255,255,.14);border-radius:2px;overflow:hidden}
+.seg label{position:relative;cursor:pointer}
+.seg input{position:absolute;opacity:0}
+.seg span{display:flex;align-items:center;justify-content:center;gap:10px;height:50px;font-weight:600;font-size:15px;color:var(--mute);transition:background .2s,color .2s}
+.seg label+label span{border-left:1px solid rgba(255,255,255,.14)}
+.seg input:checked+span{background:rgba(201,164,92,.18);color:var(--gold2)}
+.seg input:focus-visible+span{outline:2px solid var(--gold);outline-offset:-2px}
+.seg svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.6}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.plate{display:flex;align-items:stretch;height:62px;max-width:330px;background:#f4f4f2;border:3px solid #141414;border-radius:7px;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+.plate input{border:0;background:none;color:#141414;font:800 27px Manrope,sans-serif;letter-spacing:2px;text-transform:uppercase;min-width:0}
+.plate input::placeholder{color:#b3b1ab}
+.plate input:focus{outline:none;background:#fff}
+.plate .num{flex:1;padding:0 10px 0 14px}
+.plate .reg{flex:none;width:84px;border-left:3px solid #141414;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.plate .reg input{width:100%;text-align:center;font-size:22px;letter-spacing:1px;padding:0;height:32px}
+.plate .reg small{display:flex;align-items:center;gap:4px;font:800 10px Manrope,sans-serif;color:#141414;letter-spacing:.5px}
+.plate .reg i{display:inline-block;width:14px;height:9px;background:linear-gradient(#fff 33%,#1c48c4 33% 66%,#d52b1e 66%);border:1px solid #999}
+.err{color:#e59a7a;font-size:13px;margin-top:8px;display:none}.err.on{display:block}
+.side{position:sticky;top:92px}
+#map{height:330px;background:#121417;border:1px solid var(--line)}
+.leaflet-container{font-family:Manrope,sans-serif;background:#121417}
+.dark-tiles{filter:invert(1) hue-rotate(180deg) brightness(.82) contrast(.92) saturate(.35) sepia(.18)}
+.leaflet-control-attribution{background:rgba(14,15,17,.75)!important;color:#8d8a83!important;font-size:10px}
+.leaflet-control-attribution a{color:#b9a27a!important}
+.leaflet-bar a{background:#1d2024!important;color:var(--gold2)!important;border-color:rgba(255,255,255,.1)!important}
+.mk{width:30px;height:30px;border-radius:50%;background:var(--gold);color:#17130a;font:800 13px Manrope,sans-serif;display:grid;place-items:center;border:2px solid #0e0f11;box-shadow:0 0 0 2px var(--gold),0 6px 14px rgba(0,0,0,.5)}
+.mk.mid{background:#1d2024;color:var(--gold2)}
+.res{padding:30px 30px 28px;border:1px solid rgba(201,164,92,.5);border-top:0;background:linear-gradient(160deg,#1b1a16,#121110)}
+.res small.cap{font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+.res .big{display:block;font-family:"Playfair Display",serif;font-weight:500;font-size:clamp(44px,5vw,62px);line-height:1.1;margin:6px 0 4px;color:var(--gold2)}
+.res .km{color:var(--mute);font-size:14px;min-height:21px}
+.brk{list-style:none;margin:18px 0 6px;border-top:1px solid var(--line)}
+.brk li{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:15px;color:#d6d3ca}
+.brk li span+span{font-weight:700;color:var(--ink);white-space:nowrap}
+.res .note{font-size:13px;color:var(--mute);margin:12px 0 22px;line-height:1.5}
+.res .btn{width:100%}
+.res .btn+.btn{margin-top:12px}
+.lead{margin-top:22px;padding-top:22px;border-top:1px solid var(--line)}
+.lead .fl:first-child{margin-top:0}
+.done{margin-top:16px;padding:14px 16px;border:1px solid rgba(201,164,92,.5);background:rgba(201,164,92,.08);font-size:14px;color:#e2dfd7;line-height:1.5}
+.draft{margin-top:18px;font-size:13px;color:var(--gold);border-left:2px solid var(--gold);padding-left:12px;line-height:1.5}
+.mbar{display:none}
+.hidden{display:none!important}
+
+.faq{max-width:760px;margin-top:44px}
+details{border-top:1px solid var(--line);padding:22px 0}
+details:last-child{border-bottom:1px solid var(--line)}
+summary{cursor:pointer;font-weight:600;font-size:18px;list-style:none;display:flex;justify-content:space-between;gap:20px}
+summary::-webkit-details-marker{display:none}
+summary:after{content:"+";color:var(--gold);font-size:24px;line-height:1}
+details[open] summary:after{content:"–"}
+details p{color:var(--mute);margin-top:12px;max-width:620px}
+
+.contact{position:relative;text-align:center;padding:130px 0;background:linear-gradient(rgba(14,15,17,.84),rgba(14,15,17,.9)),url(dusk.jpg) center 35%/cover}
+.contact a.big{display:block;font-family:"Playfair Display",serif;font-size:clamp(36px,7vw,72px);color:var(--gold2);margin:24px 0 36px;letter-spacing:-.5px}
+footer{padding:28px 0;color:var(--mute);font-size:13px;border-top:1px solid var(--line)}
+footer .w{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+
+.rv{opacity:0;transform:translateY(22px);transition:opacity .8s ease,transform .8s ease}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+
+@media(max-width:900px){
+ nav{display:none}.hide-m{display:none}
+ section{padding:72px 0}
+ .hero-img{left:0;width:auto;-webkit-mask-image:none;mask-image:none;background-position:62% 30%}
+ .hero:before{background:linear-gradient(180deg,rgba(14,15,17,.55),rgba(14,15,17,.9) 60%,#0e0f11)}
+ .facts{gap:28px;margin-top:44px}
+ .feat{grid-template-columns:1fr 1fr}
+ .feat div{padding:28px 18px 18px 0}.feat div+div{border-left:0;padding-left:0}
+ .split{grid-template-columns:1fr}.split .ph{min-height:300px}.split .tx{padding:52px 24px}
+ .steps{grid-template-columns:1fr;gap:34px}
+ .cx{grid-template-columns:minmax(0,1fr);gap:0;margin-top:34px}.side{position:static;margin-top:4px}.blk{padding:22px 18px 24px}.two{grid-template-columns:1fr;gap:0}.two>div+div .fl{margin-top:20px!important}#map{height:260px}.res{padding:26px 20px}.row2{margin-left:0}
+ .plate{max-width:100%}
+ .mbar.show{display:flex}
+ .mbar{position:fixed;left:0;right:0;bottom:0;z-index:25;align-items:center;justify-content:space-between;gap:14px;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:rgba(14,15,17,.94);backdrop-filter:blur(8px);border-top:1px solid rgba(201,164,92,.4)}
+ .mbar small{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}.mbar b{font-family:"Playfair Display",serif;font-size:24px;color:var(--gold2);font-weight:500}.mbar .btn{min-height:44px;padding:0 22px}
+ footer{padding-bottom:90px}
+}
+</style></head><body>
+
+<header id="hd"><div class="w">
+  <a class="logo" href="#">трезвый<i>.рф</i></a>
+  <nav><a href="#why">О сервисе</a><a href="#how">Как это работает</a><a href="#price">Цены</a><a href="#faq">Вопросы</a></nav>
+  <a class="tel hide-m" href="tel:+79532025087">+7 (953) 202-50-87</a>
+</div></header>
+
+<main>
+<div class="hero">
+  <div class="hero-img" role="img" aria-label="Чёрный седан на вечерней улице города"></div>
+  <div class="w">
+    <div class="eyebrow">Владивосток · круглосуточно</div>
+    <h1>Отдыхайте.<br><em>Домой доставим</em><br>мы.</h1>
+    <p class="l">Трезвый водитель за рулём вашего автомобиля. Вы проводите вечер так, как хотите, а машина и вы возвращаетесь домой в целости.</p>
+    <div class="cta"><a class="btn" href="tel:+79532025087">Заказать водителя</a><a class="btn o" href="#price">Рассчитать цену</a></div>
+    <div class="facts">
+      <div><b>10 мин</b>подача автомобиля</div>
+      <div><b>от 1 500 ₽</b>по городу</div>
+      <div><b>24/7</b>работаем ночью</div>
+    </div>
+  </div>
+</div>
+
+<section id="why"><div class="w">
+  <div class="rv"><h2 class="h2">Спокойствие<br>без <em>компромиссов</em></h2>
+  <p class="lead">Мы отвечаем за дорогу, чтобы вы могли отвечать только за настроение вечера.</p></div>
+  <div class="feat rv">
+    <div><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="12"/><circle cx="16" cy="16" r="3"/><path d="M16 19v9M13 15l-9-2M19 15l9-2"/></svg><b>Опытные водители</b><span>Большой стаж, проверены нами лично.</span></div>
+    <div><svg viewBox="0 0 32 32"><circle cx="16" cy="18" r="11"/><path d="M16 11v7l4 3M12 3h8"/></svg><b>Быстрая подача</b><span>От 10 минут, в любое время суток.</span></div>
+    <div><svg viewBox="0 0 32 32"><rect x="4" y="8" width="24" height="16" rx="1"/><path d="M4 14h24M9 20h6"/></svg><b>Честные цены</b><span>Стоимость известна до поездки.</span></div>
+    <div><svg viewBox="0 0 32 32"><path d="M5 21l2.5-7.5h17L27 21M4 21h24v5H4zM9 26v3m14-3v3"/></svg><b>Ваша машина с вами</b><span>Утром не нужно ехать за ней.</span></div>
+  </div>
+</div></section>
+
+<div class="split">
+  <div class="ph" role="img" aria-label="Мужчина в костюме с бокалом виски вечером"></div>
+  <div class="tx rv">
+    <div class="eyebrow">Когда нужен водитель</div>
+    <h2 class="h2">Для вечера, который<br>хочется <em>не торопить</em></h2>
+    <ul>
+      <li><i>01</i>Ужин в ресторане и день рождения</li>
+      <li><i>02</i>Корпоратив и деловая встреча</li>
+      <li><i>03</i>Дача, баня и поездка с друзьями</li>
+      <li><i>04</i>Выходные и праздники</li>
+    </ul>
+  </div>
+</div>
+
+<section id="how"><div class="w">
+  <h2 class="h2 rv">Как это <em>работает</em></h2>
+  <div class="steps rv">
+    <div><div class="n">1</div><b>Позвоните или оставьте заявку</b><span>Скажите, куда едем и когда.</span></div>
+    <div><div class="n">2</div><b>Водитель приедет к вам</b><span>Подадим от 10 минут.</span></div>
+    <div><div class="n">3</div><b>Спокойно доберётесь домой</b><span>На своей машине, с водителем за рулём.</span></div>
+  </div>
+</div></section>
+
+<div class="calcwrap"><section id="price"><div class="w">
+  <h2 class="h2 rv">Рассчитайте <em>стоимость</em></h2>
+  <p class="lead">Укажите адреса и автомобиль. Цену покажем сразу, а диспетчер подтвердит заказ.</p>
+
+  <div class="cx">
+    <div>
+      <!-- 1. Маршрут -->
+      <div class="blk">
+        <h3><i>1</i>Маршрут</h3>
+        <div class="pts" id="pts">
+          <div class="pt" data-role="from"><div class="dot">А</div><div class="wrap"><input class="inp" placeholder="Откуда забрать: улица, дом или место" autocomplete="off" aria-label="Откуда"><span class="ok-mark">✓</span></div></div>
+          <div id="stops"></div>
+          <div class="pt" data-role="to"><div class="dot">Б</div><div class="wrap"><input class="inp" placeholder="Куда отвезти" autocomplete="off" aria-label="Куда"><span class="ok-mark">✓</span></div></div>
+        </div>
+        <div class="row2">
+          <button type="button" class="lnk" id="geoBtn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="7"/></svg>Я здесь (геолокация)</button>
+          <button type="button" class="lnk hidden" id="addStop"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Добавить адрес</button>
+        </div>
+        <div class="err" id="geoErr"></div>
+
+        <label class="sw" style="margin-top:14px;border-top:1px solid var(--line);padding-top:16px"><span><b>Нас несколько, развезти по разным адресам</b><small>Сначала отвезём одного, потом следующего. Цена пересчитается.</small></span><input type="checkbox" id="multi"><span class="t"></span></label>
+
+        <span class="fl">Когда подать</span>
+        <div class="seg">
+          <label><input type="radio" name="when" value="now" checked><span>Сейчас</span></label>
+          <label><input type="radio" name="when" value="later"><span>Ко времени</span></label>
+        </div>
+        <div id="timeBox" class="hidden" style="margin-top:12px"><input class="inp" type="time" id="time" value="22:00" aria-label="Время подачи"></div>
+      </div>
+
+      <!-- 2. Автомобиль -->
+      <div class="blk">
+        <h3><i>2</i>Ваш автомобиль</h3>
+        <div class="two">
+          <div><span class="fl" style="margin-top:0">Марка</span><input class="inp" id="brand" list="brands" placeholder="Например, Toyota" autocomplete="off"><datalist id="brands"></datalist></div>
+          <div><span class="fl" style="margin-top:0">Модель</span><input class="inp" id="model" list="models" placeholder="Например, Camry" autocomplete="off"><datalist id="models"></datalist></div>
+        </div>
+        <span class="fl">Госномер</span>
+        <div class="plate">
+          <input class="num" id="plate" placeholder="А 000 АА" maxlength="8" autocomplete="off" aria-label="Госномер">
+          <div class="reg"><input id="region" placeholder="125" maxlength="3" inputmode="numeric" aria-label="Регион"><small>RUS <i></i></small></div>
+        </div>
+        <div class="err" id="plateErr">Проверьте номер: формат А 123 ВС и регион из 2–3 цифр.</div>
+        <span class="fl">Руль</span>
+        <div class="seg">
+          <label><input type="radio" name="wheel" value="Левый руль" checked><span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.2"/><path d="M12 14.2V21M9.9 11.3 3.3 10M14.1 11.3l6.6-1.3"/></svg>Левый</span></label>
+          <label><input type="radio" name="wheel" value="Правый руль"><span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.2"/><path d="M12 14.2V21M9.9 11.3 3.3 10M14.1 11.3l6.6-1.3"/></svg>Правый</span></label>
+        </div>
+      </div>
+
+      <!-- 3. Опции -->
+      <div class="blk">
+        <h3><i>3</i>Дополнительно</h3>
+        <label class="sw"><span><b>Найти парковочное место</b><small>Водитель найдёт парковку у вашего дома: +<span id="parkPrice">300</span> ₽. Сама парковка оплачивается по факту.</small></span><input type="checkbox" id="park"><span class="t"></span></label>
+      </div>
+    </div>
+
+    <!-- Карта и цена -->
+    <div class="side">
+      <div id="map" role="img" aria-label="Карта маршрута"></div>
+      <div class="res" id="res">
+        <small class="cap">Предварительная стоимость</small>
+        <b class="big" id="total">—</b>
+        <div class="km" id="kmInfo">Укажите адреса, чтобы увидеть цену</div>
+        <ul class="brk" id="brk"></ul>
+        <p class="note">Ожидание <span id="waitPrice">30</span> ₽ в минуту. Итоговую цену подтвердит диспетчер.</p>
+        <button type="button" class="btn" id="leadBtn">Оставить заявку</button>
+        <a class="btn o" href="tel:+79532025087">Позвонить диспетчеру</a>
+        <form class="lead hidden" id="lead" novalidate>
+          <span class="fl">Как к вам обращаться</span><input class="inp" id="name" autocomplete="name" placeholder="Имя">
+          <span class="fl">Телефон</span><input class="inp" id="phone" type="tel" autocomplete="tel" placeholder="+7 (900) 000-00-00">
+          <div class="err" id="phoneErr">Укажите телефон, чтобы диспетчер мог перезвонить.</div>
+          <span class="fl">Комментарий</span><textarea class="inp" id="comment" placeholder="Подъезд, ориентир, пожелания"></textarea>
+          <button class="btn" style="margin-top:18px">Отправить заявку</button>
+          <div class="done hidden" id="done"></div>
+        </form>
+        <div class="draft" id="draft">Цены в калькуляторе тестовые, финальные утверждаются.</div>
+      </div>
+    </div>
+  </div>
+</div></section></div>
+<div class="mbar" id="mbar"><div><small>Предварительно</small><b id="mTotal">—</b></div><a class="btn" href="#res">Заявка</a></div>
+
+<section id="faq"><div class="w">
+  <h2 class="h2 rv">Частые <em>вопросы</em></h2>
+  <div class="faq rv">
+    <details><summary>Сколько ждать водителя?</summary><p>Подаём от 10 минут. Точное время зависит от района и загрузки, диспетчер назовёт его при заказе.</p></details>
+    <details><summary>Можно ехать с друзьями?</summary><p>Да. Надбавок за пассажиров нет. Если нужно развезти всех по разным адресам, добавьте адреса в калькуляторе.</p></details>
+    <details><summary>Что если мы задержались?</summary><p>Ожидание стоит 30 ₽ за минуту.</p></details>
+    <details><summary>Куда вы ездите?</summary><p>Владивосток, остров Русский, Седанка, Садгород, Артём и дальше по километражу.</p></details>
+    <details><summary>Как считается цена?</summary><p>По расстоянию вашего маршрута: подача и первые 10 км по фиксированной цене, дальше за каждый километр. После полуночи действует ночная надбавка. Калькулятор показывает расчёт по строкам.</p></details>
+    <details><summary>Поможете с парковкой?</summary><p>Да. Водитель найдёт парковочное место у вашего дома за 300 ₽, саму парковку вы оплачиваете по факту.</p></details>
+  </div>
+</div></section>
+
+<section class="contact"><div class="w rv">
+  <div class="eyebrow" style="justify-content:center">Закажите водителя</div>
+  <h2 class="h2">Ваш комфорт. <em>Наша забота.</em></h2>
+  <a class="big" href="tel:+79532025087">+7 (953) 202-50-87</a>
+  <a class="btn" href="tel:+79532025087">Позвонить сейчас</a>
+</div></section>
+</main>
+
+<footer><div class="w"><span>© трезвый.рф</span><span>Владивосток</span></div></footer>
+
+<script src="leaflet.min.js"></script>
+<script>
+/* ===== НАСТРОЙКИ ЦЕН (меняются здесь) ===== */
+const CFG = {
+  BASE: 1500,        // ₽: подача и первые BASE_KM км
+  BASE_KM: 10,       // км, включённые в BASE
+  PER_KM: 85,        // ₽ за каждый следующий км (тест: подобрано, чтобы Артём ≈ 4 500, Русский ≈ 2 000)
+  STOP: 200,         // ₽ за каждый дополнительный адрес (тест)
+  PARK: 300,         // ₽ за поиск парковочного места
+  WAIT: 30,          // ₽ за минуту ожидания (только в подсказке)
+  ROUND: 50,         // округление итога
+  NIGHT: [           // надбавка по часу подачи (время Владивостока); часы вне списка без надбавки
+    {from: 0, to: 2, add: 1000},
+    {from: 2, to: 4, add: 2000},
+    {from: 4, to: 6, add: 3000},
+  ],
+  MAX_STOPS: 4,
+  WA_PHONE: "79532025087",   // куда уходит заявка (WhatsApp)
+  DRAFT: true,               // показывать пометку «цены тестовые»
+};
+/* =========================================== */
+
+const $ = id => document.getElementById(id);
+const rub = n => n.toLocaleString('ru-RU') + ' ₽';
+const VL = [43.1155, 131.8855];
+const BBOX = '130.4,42.3,135.2,46.2'; // Приморский край
+$('draft').classList.toggle('hidden', !CFG.DRAFT);
+$('parkPrice').textContent = CFG.PARK; $('waitPrice').textContent = CFG.WAIT;
+
+/* ---------- Карта ---------- */
+const map = L.map('map', {zoomControl: true, scrollWheelZoom: false, maxZoom: 16}).setView(VL, 11);
+const ESRI = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/';
+L.tileLayer(ESRI + 'World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {maxZoom: 16, attribution: 'Карта &copy; Esri, HERE, Garmin, &copy; OpenStreetMap'}).addTo(map);
+L.tileLayer(ESRI + 'World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}', {maxZoom: 16}).addTo(map);
+let routeLine = null, markers = [];
+
+/* ---------- Адреса и подсказки ---------- */
+function fmt(f) {
+  const p = f.properties, st = [p.street, p.housenumber].filter(Boolean).join(', ');
+  let title = p.name || st || p.city || '';
+  if (!p.name && p.housenumber && !p.street) title = p.housenumber;
+  const sub = [p.name && st ? st : null, p.city || p.county || p.state].filter(Boolean).join(', ');
+  return {poi: !!p.name, title, sub, label: [title, p.name && st ? st : null, p.city].filter(Boolean).join(', '),
+          lat: f.geometry.coordinates[1], lon: f.geometry.coordinates[0]};
+}
+async function photon(q) {
+  const r = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&lat=${VL[0]}&lon=${VL[1]}&limit=7&lang=default&bbox=${BBOX}`);
+  const j = await r.json(), seen = new Set();
+  const list = j.features.map(fmt).filter(x => { const k = x.label; if (seen.has(k)) return false; seen.add(k); return true; });
+  return /\d/.test(q) ? list.sort((a, b) => a.poi - b.poi) : list;
+}
+async function reverse(lat, lon) {
+  const r = await fetch(`https://photon.komoot.io/reverse?lat=${lat}&lon=${lon}&limit=1&lang=default`);
+  const j = await r.json();
+  return j.features[0] ? {...fmt(j.features[0]), lat, lon} : {label: `${lat.toFixed(5)}, ${lon.toFixed(5)}`, lat, lon};
+}
+function setPoint(pt, val) {
+  pt._v = val;
+  const inp = pt.querySelector('input');
+  if (val) inp.value = val.label;
+  pt.querySelector('.wrap').classList.toggle('ok', !!val);
+  scheduleRoute();
+}
+function attach(pt) {
+  const inp = pt.querySelector('input'), wrap = pt.querySelector('.wrap');
+  const box = document.createElement('div'); box.className = 'sug'; wrap.appendChild(box);
+  let t, items = [], act = -1, seq = 0;
+  const close = () => { box.classList.remove('on'); act = -1; };
+  const render = () => {
+    box.innerHTML = items.length ? items.map((x, i) => `<div class="${i === act ? 'act' : ''}" data-i="${i}">${esc(x.title)}${x.sub ? `<small>${esc(x.sub)}</small>` : ''}</div>`).join('')
+                                 : '<div class="em">Ничего не нашли. Уточните адрес или позвоните диспетчеру.</div>';
+    box.classList.add('on');
+  };
+  const pick = i => { setPoint(pt, items[i]); close(); };
+  inp.addEventListener('input', () => {
+    if (pt._v) setPoint(pt, null);
+    clearTimeout(t); const q = inp.value.trim();
+    if (q.length < 3) { close(); return; }
+    t = setTimeout(async () => {
+      const my = ++seq;
+      try { const res = await photon(q); if (my !== seq) return; items = res; act = -1; render(); }
+      catch (e) { items = []; box.innerHTML = '<div class="em">Поиск адресов недоступен. Позвоните диспетчеру.</div>'; box.classList.add('on'); }
+    }, 300);
+  });
+  inp.addEventListener('keydown', e => {
+    if (!box.classList.contains('on') || !items.length) return;
+    if (e.key === 'ArrowDown') { act = (act + 1) % items.length; render(); e.preventDefault(); }
+    else if (e.key === 'ArrowUp') { act = (act - 1 + items.length) % items.length; render(); e.preventDefault(); }
+    else if (e.key === 'Enter') { pick(act < 0 ? 0 : act); e.preventDefault(); }
+    else if (e.key === 'Escape') close();
+  });
+  box.addEventListener('mousedown', e => { const d = e.target.closest('[data-i]'); if (d) { e.preventDefault(); pick(+d.dataset.i); } });
+  inp.addEventListener('blur', () => setTimeout(close, 150));
+}
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+document.querySelectorAll('#pts > .pt').forEach(attach);
+
+/* ---------- Несколько адресов ---------- */
+function points() { return [...document.querySelectorAll('#pts .pt')]; }
+function relabel() {
+  const ps = points();
+  ps.forEach((p, i) => { p.querySelector('.dot').textContent = i === 0 ? 'А' : (i === ps.length - 1 ? 'Б' : i); });
+  $('addStop').classList.toggle('hidden', !$('multi').checked || ps.length - 2 >= CFG.MAX_STOPS);
+}
+function addStop() {
+  const d = document.createElement('div'); d.className = 'pt mid';
+  d.innerHTML = '<div class="dot"></div><div class="wrap"><input class="inp" placeholder="Промежуточный адрес" autocomplete="off" aria-label="Промежуточный адрес"><span class="ok-mark">✓</span></div><button type="button" class="del" aria-label="Убрать адрес">×</button>';
+  d.querySelector('.del').onclick = () => { d.remove(); relabel(); scheduleRoute(); };
+  $('stops').appendChild(d); attach(d); relabel(); d.querySelector('input').focus();
+}
+$('multi').addEventListener('change', () => {
+  if ($('multi').checked) { if (!$('stops').children.length) addStop(); }
+  else { $('stops').innerHTML = ''; }
+  relabel(); scheduleRoute();
+});
+$('addStop').onclick = addStop;
+$('pts').querySelector('[data-role=to] input').placeholder = 'Куда отвезти';
+
+/* ---------- Геолокация ---------- */
+$('geoBtn').onclick = () => {
+  const err = $('geoErr'); err.classList.remove('on');
+  if (!navigator.geolocation) { err.textContent = 'Браузер не поддерживает геолокацию. Введите адрес вручную.'; err.classList.add('on'); return; }
+  $('geoBtn').disabled = true;
+  navigator.geolocation.getCurrentPosition(async pos => {
+    try { setPoint(points()[0], await reverse(pos.coords.latitude, pos.coords.longitude)); }
+    catch (e) { setPoint(points()[0], {label: 'Моё местоположение', lat: pos.coords.latitude, lon: pos.coords.longitude}); }
+    $('geoBtn').disabled = false;
+  }, () => { err.textContent = 'Не удалось определить местоположение. Разрешите доступ или введите адрес вручную.'; err.classList.add('on'); $('geoBtn').disabled = false; },
+  {enableHighAccuracy: true, timeout: 10000});
+};
+
+/* ---------- Маршрут и цена ---------- */
+let rt, routeKm = null, routeMin = null, routeSeq = 0;
+function scheduleRoute() { clearTimeout(rt); rt = setTimeout(buildRoute, 250); }
+async function buildRoute() {
+  const ps = points(), vals = ps.map(p => p._v);
+  markers.forEach(m => m.remove()); markers = [];
+  ps.forEach((p, i) => {
+    if (!p._v) return;
+    const mid = i > 0 && i < ps.length - 1;
+    const m = L.marker([p._v.lat, p._v.lon], {draggable: true,
+      icon: L.divIcon({className: '', html: `<div class="mk${mid ? ' mid' : ''}">${p.querySelector('.dot').textContent}</div>`, iconSize: [30, 30], iconAnchor: [15, 15]})}).addTo(map);
+    m.on('dragend', async () => { const ll = m.getLatLng(); try { setPoint(p, await reverse(ll.lat, ll.lng)); } catch (e) { setPoint(p, {label: 'Точка на карте', lat: ll.lat, lon: ll.lng}); } });
+    markers.push(m);
+  });
+  if (routeLine) { routeLine.remove(); routeLine = null; }
+  const ready = vals.every(Boolean) && vals.length >= 2;
+  if (!ready) {
+    routeKm = null;
+    if (markers.length) map.setView(markers[markers.length - 1].getLatLng(), 15);
+    price(); return;
+  }
+  const my = ++routeSeq;
+  $('kmInfo').textContent = 'Строим маршрут…';
+  try {
+    const coords = vals.map(v => `${v.lon},${v.lat}`).join(';');
+    const r = await fetch(`https://router.project-osrm.org/route/v1/driving/${coords}?overview=full&geometries=geojson`);
+    const j = await r.json(); if (my !== routeSeq) return;
+    if (j.code !== 'Ok') throw 0;
+    routeKm = j.routes[0].distance / 1000; routeMin = Math.round(j.routes[0].duration / 60);
+    routeLine = L.geoJSON(j.routes[0].geometry, {style: {color: '#e7cb8e', weight: 4, opacity: .9}}).addTo(map);
+    map.fitBounds(routeLine.getBounds(), {padding: [36, 36]});
+  } catch (e) {
+    if (my !== routeSeq) return;
+    let d = 0; for (let i = 1; i < vals.length; i++) d += map.distance([vals[i-1].lat, vals[i-1].lon], [vals[i].lat, vals[i].lon]);
+    routeKm = d / 1000 * 1.35; routeMin = null;   // запасной расчёт по прямой с поправкой на дороги
+    map.fitBounds(L.featureGroup(markers).getBounds(), {padding: [36, 36]});
+  }
+  price();
+}
+function pickupHour() {
+  if (document.querySelector('[name=when]:checked').value === 'later') return +($('time').value || '22:00').split(':')[0];
+  return +new Intl.DateTimeFormat('ru-RU', {timeZone: 'Asia/Vladivostok', hour: 'numeric', hourCycle: 'h23'}).format(new Date());
+}
+function calc() {
+  if (routeKm == null) return null;
+  const lines = [];
+  const km = Math.round(routeKm * 10) / 10;
+  const trip = CFG.BASE + Math.max(0, Math.ceil(km - CFG.BASE_KM)) * CFG.PER_KM;
+  lines.push([`Поездка, ${km.toLocaleString('ru-RU')} км`, trip]);
+  const stops = points().length - 2;
+  if (stops > 0) lines.push([`Дополнительные адреса × ${stops}`, stops * CFG.STOP]);
+  if ($('park').checked) lines.push(['Поиск парковочного места', CFG.PARK]);
+  const h = pickupHour(), n = CFG.NIGHT.find(x => h >= x.from && h < x.to);
+  if (n) lines.push([`Ночная надбавка (${String(n.from).padStart(2,'0')}:00–${String(n.to).padStart(2,'0')}:00)`, n.add]);
+  const sum = lines.reduce((s, l) => s + l[1], 0);
+  return {lines, km, total: Math.ceil(sum / CFG.ROUND) * CFG.ROUND};
+}
+function price() {
+  const c = calc();
+  if (!c) { $('total').textContent = '—'; $('mTotal').textContent = '—'; $('brk').innerHTML = '';
+            $('kmInfo').textContent = 'Укажите адреса, чтобы увидеть цену'; return; }
+  $('total').textContent = rub(c.total); $('mTotal').textContent = rub(c.total);
+  $('kmInfo').textContent = `${c.km.toLocaleString('ru-RU')} км` + (routeMin ? ` · около ${routeMin} мин в пути` : ' · расстояние примерное');
+  $('brk').innerHTML = c.lines.map(l => `<li><span>${esc(l[0])}</span><span>${rub(l[1])}</span></li>`).join('');
+  if (typeof mbar === 'function') mbar();
+}
+document.querySelectorAll('[name=when]').forEach(r => r.addEventListener('change', () => { $('timeBox').classList.toggle('hidden', r.value !== 'later' || !r.checked); price(); }));
+['time', 'park'].forEach(id => $(id).addEventListener('input', price));
+$('park').addEventListener('change', price);
+
+/* ---------- Автомобиль ---------- */
+const CARS = {
+  "Toyota":["Camry","Corolla","Corolla Fielder","Prius","Aqua","Land Cruiser","Land Cruiser Prado","RAV4","Harrier","Alphard","Vellfire","Noah","Voxy","Crown","Mark X","Hilux","Highlander","C-HR","Yaris","Vitz","Sienta"],
+  "Lexus":["RX","LX","GX","NX","ES","IS","LS","UX"],
+  "Nissan":["X-Trail","Note","Serena","Leaf","Qashqai","Murano","Patrol","Teana","Juke","Elgrand","Skyline","Tiida","AD"],
+  "Honda":["Fit","Vezel","Freed","Stepwgn","CR-V","Accord","Civic","Stream","Odyssey","Shuttle"],
+  "Mazda":["CX-5","CX-30","CX-8","Mazda3","Mazda6","Axela","Atenza","Demio","MPV"],
+  "Subaru":["Forester","Outback","Impreza","XV","Legacy","Levorg"],
+  "Mitsubishi":["Outlander","Pajero","Pajero Sport","Delica","ASX","Lancer","eK"],
+  "Suzuki":["Jimny","Swift","Escudo","Hustler","Solio"],
+  "Daihatsu":["Tanto","Move","Rocky"],
+  "Infiniti":["QX50","QX60","QX80","FX"],
+  "Hyundai":["Solaris","Creta","Tucson","Santa Fe","Palisade","Elantra","Sonata","Staria"],
+  "Kia":["Rio","Sportage","Sorento","K5","Seltos","Carnival","Ceed","Mohave"],
+  "Genesis":["G70","G80","G90","GV70","GV80"],
+  "Mercedes-Benz":["C-Class","E-Class","S-Class","GLC","GLE","GLS","G-Class","V-Class"],
+  "BMW":["3 Series","5 Series","7 Series","X3","X5","X6","X7"],
+  "Audi":["A4","A6","A8","Q3","Q5","Q7","Q8"],
+  "Volkswagen":["Polo","Tiguan","Touareg","Passat"],
+  "Porsche":["Cayenne","Macan","Panamera"],
+  "Land Rover":["Range Rover","Range Rover Sport","Discovery","Defender"],
+  "Volvo":["XC60","XC90","S90"],
+  "Lada":["Vesta","Granta","Niva"],
+  "Geely":["Monjaro","Coolray","Atlas","Tugella"],
+  "Haval":["Jolion","F7","H6","Dargo"],
+  "Chery":["Tiggo 4","Tiggo 7 Pro","Tiggo 8 Pro"],
+  "Changan":["CS35","CS55","UNI-K","UNI-V"],
+  "Exeed":["TXL","VX","LX"],
+  "Li Auto":["L7","L9"],
+  "Zeekr":["001","7X"]
+};
+$('brands').innerHTML = Object.keys(CARS).map(b => `<option value="${b}">`).join('');
+$('brand').addEventListener('input', () => {
+  const b = Object.keys(CARS).find(k => k.toLowerCase() === $('brand').value.trim().toLowerCase());
+  $('models').innerHTML = (b ? CARS[b] : []).map(m => `<option value="${m}">`).join('');
+});
+const LAT = {A:'А',B:'В',E:'Е',K:'К',M:'М',H:'Н',O:'О',P:'Р',C:'С',T:'Т',Y:'У',X:'Х'};
+const PL = 'АВЕКМНОРСТУХ';
+$('plate').addEventListener('input', () => {
+  let v = $('plate').value.toUpperCase().replace(/[A-Z]/g, c => LAT[c] || '').replace(/Ё/g, 'Е');
+  let out = '';
+  for (const ch of v) { const need = 'LDDDLL'[out.length]; if (!need) break;
+    if ((need === 'L' && PL.includes(ch)) || (need === 'D' && /\d/.test(ch))) out += ch; }
+  $('plate').value = [out.slice(0, 1), out.slice(1, 4), out.slice(4)].filter(Boolean).join(' ');
+  $('plateErr').classList.remove('on');
+  if (out.length === 6) $('region').focus();
+});
+$('region').addEventListener('input', () => { $('region').value = $('region').value.replace(/\D/g, '').slice(0, 3); });
+function plateText() {
+  const n = $('plate').value.replace(/\s/g, ''), r = $('region').value;
+  if (!n && !r) return '';
+  return `${$('plate').value} ${r}`.trim();
+}
+function plateOk() {
+  const n = $('plate').value.replace(/\s/g, ''), r = $('region').value;
+  if (!n && !r) return true;
+  return /^[АВЕКМНОРСТУХ]\d{3}[АВЕКМНОРСТУХ]{2}$/.test(n) && /^\d{2,3}$/.test(r);
+}
+
+/* ---------- Заявка ---------- */
+$('leadBtn').onclick = () => { $('lead').classList.remove('hidden'); $('leadBtn').classList.add('hidden'); $('name').focus(); };
+$('phone').addEventListener('input', () => {
+  let d = $('phone').value.replace(/\D/g, ''); if (d[0] === '8') d = '7' + d.slice(1); if (d && d[0] !== '7') d = '7' + d; d = d.slice(0, 11);
+  const p = [d.slice(1, 4), d.slice(4, 7), d.slice(7, 9), d.slice(9, 11)];
+  $('phone').value = d ? '+7' + (p[0] ? ` (${p[0]}` : '') + (p[1] ? `) ${p[1]}` : '') + (p[2] ? `-${p[2]}` : '') + (p[3] ? `-${p[3]}` : '') : '';
+  $('phoneErr').classList.remove('on');
+});
+$('lead').addEventListener('submit', e => {
+  e.preventDefault();
+  if ($('phone').value.replace(/\D/g, '').length !== 11) { $('phoneErr').classList.add('on'); $('phone').focus(); return; }
+  if (!plateOk()) { $('plateErr').classList.add('on'); $('plate').scrollIntoView({block: 'center'}); return; }
+  const ps = points(), c = calc();
+  const when = document.querySelector('[name=when]:checked').value === 'later' ? `ко времени ${$('time').value}` : 'сейчас';
+  const car = [$('brand').value, $('model').value].filter(Boolean).join(' ');
+  const msg = [
+    'Заявка с сайта трезвый.рф',
+    `Откуда: ${ps[0].querySelector('input').value || '—'}`,
+    ...ps.slice(1, -1).map((p, i) => `Заезд ${i + 1}: ${p.querySelector('input').value || '—'}`),
+    `Куда: ${ps[ps.length - 1].querySelector('input').value || '—'}`,
+    `Подача: ${when}`,
+    `Авто: ${car || '—'}${plateText() ? ', ' + plateText() : ''}, ${document.querySelector('[name=wheel]:checked').value.toLowerCase()}`,
+    `Парковка: ${$('park').checked ? 'найти место' : 'не нужна'}`,
+    `Предварительно: ${c ? rub(c.total) + ` (${c.km.toLocaleString('ru-RU')} км)` : 'не рассчитано'}`,
+    `Имя: ${$('name').value || '—'}`, `Телефон: ${$('phone').value}`,
+    $('comment').value ? `Комментарий: ${$('comment').value}` : ''
+  ].filter(Boolean).join('\n');
+  const wa = `https://wa.me/${CFG.WA_PHONE}?text=${encodeURIComponent(msg)}`;
+  const w = window.open(wa, '_blank'); if (!w) location.href = wa;
+  $('done').innerHTML = 'Заявка открыта в WhatsApp, отправьте сообщение. Если WhatsApp не открылся, позвоните: <a href="tel:+79532025087" style="color:var(--gold2)">+7 (953) 202-50-87</a>.';
+  $('done').classList.remove('hidden');
+});
+relabel(); price();
+/* нижняя плашка с ценой на телефоне: только когда цена есть и блок цены не на экране */
+var resVisible = false;
+new IntersectionObserver(es => { resVisible = es[0].isIntersecting; mbar(); }).observe($("res"));
+function mbar() { $("mbar").classList.toggle("show", !!calc() && !resVisible); }
+
+
+const hd=$('hd');const sc=()=>hd.classList.toggle('s',scrollY>40);addEventListener('scroll',sc,{passive:true});sc();
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+</script>
+</body></html>
+
