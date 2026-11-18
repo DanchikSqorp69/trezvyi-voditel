@@ -371,7 +371,7 @@ const CFG = {
   STOP: 500,         // ₽ за каждый дополнительный адрес сверх километража: заявка дольше (предложение Claude, Данил хочет повышенный тариф; сумму подтвердить)
   PARK: 300,         // ₽ за поиск парковочного места
   WAIT: 30,          // ₽ за минуту ожидания (только в подсказке)
-  ROUND: 50,         // округление итога
+  ROUND: 50,         // итог округляется ВНИЗ до 50 ₽ (Данил, 2026-11-18); для 100 поставить 100
   NIGHT: [],        // ночная надбавка выключена: ориентиры Данила уже итоговые (вернуть при решении, формат {from:0,to:2,add:1000})
   MAX_STOPS: 4,
   WA_PHONE: "79532025087",   // куда уходит заявка (WhatsApp)
@@ -568,7 +568,11 @@ function calc() {
   const h = pickupHour(), n = CFG.NIGHT.find(x => h >= x.from && h < x.to);
   if (n) lines.push([`Ночная надбавка (${String(n.from).padStart(2,'0')}:00–${String(n.to).padStart(2,'0')}:00)`, n.add]);
   const sum = lines.reduce((s, l) => s + l[1], 0);
-  return {lines, km, total: Math.ceil(sum / CFG.ROUND) * CFG.ROUND};
+  const total = Math.max(CFG.BASE, Math.floor(sum / CFG.ROUND) * CFG.ROUND);
+  // Разницу от округления снимаем со строки «Километраж», чтобы строки в сумме давали ровно итог
+  const kmLine = lines.find(l => l[0].startsWith('Километраж'));
+  if (kmLine) kmLine[1] -= sum - total;
+  return {lines, km, total};
 }
 function price() {
   const c = calc();
