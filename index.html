@@ -261,15 +261,16 @@ footer .w{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
       <div class="blk">
         <h3><i>1</i>Маршрут</h3>
         <div class="pts" id="pts">
-          <div class="pt" data-role="from"><div class="dot">А</div><div class="wrap"><input class="inp" placeholder="Откуда забрать: улица, дом или место" autocomplete="off" aria-label="Откуда"><span class="ok-mark">✓</span></div></div>
+          <div class="pt" data-role="from"><div class="dot">А</div><div class="wrap"><input class="inp" placeholder="Откуда: улица и номер дома" autocomplete="off" aria-label="Откуда"><span class="ok-mark">✓</span></div></div>
           <div id="stops"></div>
-          <div class="pt" data-role="to"><div class="dot">Б</div><div class="wrap"><input class="inp" placeholder="Куда отвезти" autocomplete="off" aria-label="Куда"><span class="ok-mark">✓</span></div></div>
+          <div class="pt" data-role="to"><div class="dot">Б</div><div class="wrap"><input class="inp" placeholder="Куда: улица и номер дома" autocomplete="off" aria-label="Куда"><span class="ok-mark">✓</span></div></div>
         </div>
         <div class="row2">
           <button type="button" class="lnk" id="geoBtn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="7"/></svg>Я здесь (геолокация)</button>
           <button type="button" class="lnk hidden" id="addStop"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Добавить адрес</button>
         </div>
         <div class="err" id="geoErr"></div>
+        <div class="err" id="houseHint">Укажите номер дома, так цена будет точной. Если вашего дома нет в списке, перетащите метку на карте к нужному месту.</div>
 
         <label class="sw" style="margin-top:14px;border-top:1px solid var(--line);padding-top:16px"><span><b>Нас несколько, развезти по разным адресам</b><small>Сначала отвезём одного, потом следующего. Цена пересчитается.</small></span><input type="checkbox" id="multi"><span class="t"></span></label>
 
@@ -368,7 +369,7 @@ const CFG = {
   ],
   // Подобрано под ориентиры Данила от отеля Lotte: Луговая 2 000–2 500, Тихая 3 000–3 200, Седанка 3 500–4 000,
   // Русский 4 000, Спутник 5 000–5 500, Весенняя/Трудовое ~6 000, Артём 7 000–7 500.
-  STOP: 500,         // ₽ за каждый дополнительный адрес сверх километража: заявка дольше (предложение Claude, Данил хочет повышенный тариф; сумму подтвердить)
+  STOP: 500,         // ₽ за каждый заезд по доп. адресу сверх километража (Данил подтвердил, 2026-11-18)
   PARK: 300,         // ₽ за поиск парковочного места
   WAIT: 30,          // ₽ за минуту ожидания (только в подсказке)
   ROUND: 50,         // итог округляется ВНИЗ до 50 ₽ (Данил, 2026-11-18); для 100 поставить 100
@@ -430,6 +431,7 @@ async function reverse(lat, lon) {
 }
 function setPoint(pt, val) {
   pt._v = val;
+  setTimeout(() => $("houseHint").classList.toggle("on", points().some(p => p._v && !p._v.house && !p._v.poi)), 0);
   const inp = pt.querySelector('input');
   if (val) inp.value = val.label;
   pt.querySelector('.wrap').classList.toggle('ok', !!val);
@@ -478,7 +480,7 @@ function relabel() {
 }
 function addStop() {
   const d = document.createElement('div'); d.className = 'pt mid';
-  d.innerHTML = '<div class="dot"></div><div class="wrap"><input class="inp" placeholder="Промежуточный адрес" autocomplete="off" aria-label="Промежуточный адрес"><span class="ok-mark">✓</span></div><button type="button" class="del" aria-label="Убрать адрес">×</button>';
+  d.innerHTML = '<div class="dot"></div><div class="wrap"><input class="inp" placeholder="Заезд: улица и номер дома" autocomplete="off" aria-label="Промежуточный адрес"><span class="ok-mark">✓</span></div><button type="button" class="del" aria-label="Убрать адрес">×</button>';
   d.querySelector('.del').onclick = () => { d.remove(); relabel(); scheduleRoute(); };
   $('stops').appendChild(d); attach(d); relabel(); d.querySelector('input').focus();
 }
@@ -488,7 +490,7 @@ $('multi').addEventListener('change', () => {
   relabel(); scheduleRoute();
 });
 $('addStop').onclick = addStop;
-$('pts').querySelector('[data-role=to] input').placeholder = 'Куда отвезти';
+$('pts').querySelector('[data-role=to] input').placeholder = 'Куда: улица и номер дома';
 
 /* ---------- Геолокация ---------- */
 $('geoBtn').onclick = () => {
@@ -528,7 +530,7 @@ async function buildRoute() {
   $('kmInfo').textContent = 'Строим маршрут…';
   try {
     const coords = vals.map(v => `${v.lon},${v.lat}`).join(';');
-    const r = await fetch(`https://router.project-osrm.org/route/v1/driving/${coords}?overview=full&geometries=geojson`);
+    const r = await fetch(`https://router.project-osrm.org/route/v1/driving/${coords}?overview=full&geometries=geojson`, {signal: AbortSignal.timeout(8000)});
     const j = await r.json(); if (my !== routeSeq) return;
     if (j.code !== 'Ok') throw 0;
     routeKm = j.routes[0].distance / 1000; routeMin = Math.round(j.routes[0].duration / 60);
